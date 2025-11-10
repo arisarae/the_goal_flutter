@@ -34,3 +34,26 @@ A `BuildContext` is an object that acts as an "address," telling a widget its ex
 
 ### Explain the concept of a “hot reload” in Flutter and how it differs from a “hot restart”
 Hot Reload injects new code into the running app and just re-runs the `build` methods, which is extremely fast. Critically, it keeps the app's state, so a counter's value, for example, is preserved. This is perfect for making quick UI changes. Meanwhile, Hot Restart re-runs the app from the beginning, completely destroying and resetting the state. This is necessary when changes are made to state initialization (like in `initState`) or other logic that Hot Reload can't handle.
+
+## Assignment 8
+> Flutter Navigation, Layouts, Forms, and Input Elements
+
+### Explain the difference between `Navigator.push()` and `Navigator.pushReplacement()` in Flutter. In what context of your application is each best used?
+
+`Navigator.push()` adds a new route (screen) to the top of the navigation stack. The old screen still exists underneath it and user can press the "back" button to return to it. This is best used for later when tapping an item in a list revealing its detail page, and going back from the page return us to the list. Meanwhile, `Navigator.pushReplacement()` pushes a new route while simultaneously removes the current route from the stack. This means the user cannot go back to the previous screen after moving. This is best used when switching between tabs in the same hierarcy (home, product list, product form).
+
+### How do you use hierarchy widget like `Scaffold`, `AppBar`, dan `Drawer` to build a consistent page structure in the your application?
+
+`Scaffold` used as the main container for a screen, providing standard slots for other major widgets. By using `Scaffold` on every page, a consistent base is established. `AppBar` is placed in the `Scaffold`'s `appBar` slot, ensuring the title bar appears in the same place on every screen. Having a familiar location for the page title and any action buttons can improve user flow. Similarly, the `Drawer` is placed in the `Scaffold`'s `drawer` slot. This creates a standard slide-out navigation menu that can be accessed from any page that includes it, giving the user a consistent way to navigate the entire app.
+
+### In the context of user interface design, what do you think is the advantages of using layout widget like `Padding`, `SingleChildScrollView`, and `ListView` when displaying form elements? Provide usage examples from your application.
+
+- `Padding`: Wrapping form fields in `Padding` prevent it from touching the screen edges or each other. In my app, I use this to add space around the text fields so they are easier to read, neater, and more comfortable to use.
+
+- `SingleChildScrollView`: It prevents content overflow. When a form is longer than the screen (especially on small devices or when the keyboard appears), `SingleChildScrollView` wraps the form and allows the user to scroll, ensuring all fields remain accessible. This is perfect for a "Create Product" form that have many fields to fill.
+
+- `ListView`: This is better for longer and more dynamic forms, as it's more memory-efficient by only rendering the form elements that are currently visible on the screen. `ListView` is ideal for a long settings page or a complex form, which we don't need yet in this application. Instead, its function here is to organize the `Drawer` contents into a single vertical list. This automatically makes the menu items scrollable, ensuring that even if more items are added later, they will all be accessible.
+
+### How do you set the color theme so that your Football Shop have a visual identity that is consistent with the shop brand.
+
+To ensure the app has a consistent visual identity, a global color theme is set in the `MaterialApp` widget. This is done using the theme property and a `ThemeData` object. Inside `ThemeData`, the `colorScheme` is defined, for example, by using `ColorScheme.fromSwatch()` and specifying a `primarySwatch`. This primary color is then automatically used by other widgets, like the `AppBar`'s background color. By defining the brand's main colors in this single, central location, every widget in the app will use these same colors by default, ensuring a consistent brand identity across the entire application.
