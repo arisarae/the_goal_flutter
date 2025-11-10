@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:the_goal_mobile/menu.dart';
+import 'package:the_goal_mobile/screens/menu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green,)
-            .copyWith(secondary: Colors.greenAccent[400]),
+            .copyWith(secondary: Colors.lightGreen),
       ),
       home: MyHomePage(),
     );
