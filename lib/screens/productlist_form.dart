@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:the_goal_mobile/screens/menu.dart';
 import 'package:the_goal_mobile/widgets/left_drawer.dart';
 
 class ProductFormPage extends StatefulWidget {
@@ -27,6 +31,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Add Product Form')),
@@ -236,58 +241,44 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(Colors.green),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        final String savedName = _name;
-                        final int? savedPrice = _price;
-                        final String savedDesc = _desc;
-                        final String savedThumbnail = _thumbnail;
-                        final String savedCategory = _category;
-                        final int? savedStock = _stock;
-                        final bool savedIsFeatured = _isFeatured;
+                        final response = await request.postJson(
+                          "http://127.0.0.1:8000/create-flutter/",
+                          jsonEncode({
+                            "name": _name,
+                            "price": _price,
+                            "description": _desc,
+                            "thumbnail": _thumbnail,
+                            "category": _category,
+                            "stock": _stock,
+                            "is_featured": _isFeatured,
+                          }),
+                        );
 
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Product saved'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Name: $savedName'),
-                                    Text('Price: ${savedPrice ?? 0}'),
-                                    Text('Description: $savedDesc'),
-                                    Text('Thumbnail: ${savedThumbnail.isEmpty ? "-" : savedThumbnail}'),
-                                    Text('Category: $savedCategory'),
-                                    Text('Stock: ${savedStock ?? 0}'),
-                                    Text(
-                                      'Featured: ${savedIsFeatured ? "Yes" : "No"}',
-                                    ),
-                                  ],
+                        if (context.mounted) {
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Product successfully saved!"),
+                              ),
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Something went wrong, please try again.",
                                 ),
                               ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
                             );
-                          },
-                        );
-                        _formKey.currentState!.reset();
-                        setState(() {
-                          _name = "";
-                          _price = null;
-                          _desc = "";
-                          _thumbnail = "";
-                          _category = "Shoes";
-                          _stock = null;
-                          _isFeatured = false;
-                        });
+                          }
+                        }
                       }
                     },
                     child: const Text(
